@@ -1,0 +1,43 @@
+function createStore(state, changeState) {
+        const listeners = [];
+        const subscribe = (listener) => listeners.push(listener);
+        const getState = () => state;
+        const dispatch = (action) => {
+            changeState(state, action);
+            listeners.forEach((listener) => listener());
+        };
+        return {
+            getState,
+            dispatch,
+            subscribe
+        };
+    }
+    const state = {
+        msg: 0
+    };
+    function render(state) {
+        console.log('执行渲染操作' + state.msg);
+    }
+    function stateChanger(state, action) {
+        switch (action.type) {
+            case 'add':
+                state.msg = action.val;
+                break;
+            case 'del':
+                state.msg = action.val;
+                break;
+            default:
+                break;
+        }
+    }
+    const store = createStore(state, stateChanger);
+    render(store.getState());
+    store.subscribe(() => render(store.getState()));
+    store.dispatch({
+        type: 'add',
+        val: '第一次的数据'
+    });
+    store.dispatch({
+        type: 'add',
+        val: '第二次的数据'
+    });

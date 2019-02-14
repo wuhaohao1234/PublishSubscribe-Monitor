@@ -1,0 +1,22 @@
+{
+    "compileOnSave": true,
+    "compilerOptions": {
+        "module": "es6",
+        "outDir": "./dist",
+        "sourceMap": true,//生成map文件
+        "target": "es6",
+        "removeComments": true,//删除注释
+        "declaration": false,//没有描述
+        "moduleResolution": "node",//node模块
+        "noImplicitAny": true,
+        "experimentalDecorators": true
+    },
+    "exclude": [
+        "dist",
+        "node_modules",
+        "**/*.spec.ts"
+    ],
+    "include": [
+        "src/**/*"
+    ]
+}

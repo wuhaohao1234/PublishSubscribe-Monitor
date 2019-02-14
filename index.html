@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <div id="app">
+
+    </div>
+    <script src="./dist/index.js"></script>
+    <script>
+        const state = {
+            msg:0
+        }
+        const render = function () {
+            app.innerHTML = state.msg
+        }
+        const changeState = function (state,action) {
+            switch (action.type) {
+                case 'add':
+                    state.msg = action.val
+                    break;
+                case 'del':
+                    state.msg = action.val
+                    break;
+                default:
+                    break;
+            }
+        }
+        let store = createStore(state,changeState)
+        store.subscribe(render)
+        render(store.getState())
+        store.dispatch({
+            type:'add',
+            val:'1'
+        })
+        store.dispatch({
+            type: 'add',
+            val: '2'
+        })
+    </script>
+</body>
+</html>

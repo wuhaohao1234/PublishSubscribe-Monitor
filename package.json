@@ -1,0 +1,23 @@
+{
+  "name": "PublishSubscribe-Monitor",
+  "version": "0.0.1",
+  "description": "发布订阅模式与监听着模式",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "tsc -w",
+    "build": "tsc",
+    "lint": "tslint --project tslint.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wuhaohao1234/PublishSubscribe-Monitor.git"
+  },
+  "keywords": [],
+  "author": "wuhaohao <1611499758@qq.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/wuhaohao1234/PublishSubscribe-Monitor/issues"
+  },
+  "homepage": "https://github.com/wuhaohao1234/PublishSubscribe-Monitor#readme"
+}
