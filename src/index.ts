@@ -2,14 +2,14 @@
  * 用户传递的数据state为一个对象
  * @param state
  */
-interface IState  {
+interface State {
     [index: string]: any;
 }
 /**
  * 用户传递的行为
  * @param action
  */
-type iAction = {
+interface Action {
     type: string;
     val: any;
 }
@@ -17,33 +17,36 @@ type iAction = {
  * 用户传递的修改数据的方法
  * @param changeState
  */
-type iChangeState = (appSate: IState, action: iAction) => void
-
-type irenderFun = () => void;
+type ChangeState = <T>(getSate: T, action: Action) => void
 /**
- * 事件收集容器
+ * 用户传递渲染函数
+ * @param listener RenderFun
+ */
+type RenderFun = <T>() => void;
+/**
+ * 事件收集容器,listeners必须是数组，里面只能存放函数
  * @param listeners
  */
-type ilisteners = {
-    [index: number]: Function
+interface Listeners {
+    [index: number]: RenderFun
 }
 /**
  * dispatch
  * 修改state数据
  * @param dispatch
  */
-type idispatch = (action: iAction) => void;
-type isubscribe = (listener: irenderFun) => void;
+type Dispatch = (action: Action) => void;
+type Subscribe = (listener: RenderFun) => void;
 /**
  * createStore的返回值
  * @param store
- */ 
-type iStore = {
-    getState: IState;
-    dispatch: idispatch;
-    subscribe: isubscribe;
+ */
+interface Store {
+    getState: State;
+    dispatch: Dispatch;
+    subscribe: Subscribe;
 }
-
+type GetState = <T>() => State;
 /**
  * 
  * @param state 初始数据
@@ -51,16 +54,16 @@ type iStore = {
  * 
  * 返回subscribe添加渲染函数,dispatch修改行为,getState初始化数据
  */
-function createStore(state: IState, changeState: iChangeState): iStore {
-    let listeners: irenderFun[] = []
-    let getState = () => state
-    let dispatch = (action: iAction) => {
+function createStore<T>(state: T, changeState: ChangeState): Store {
+    let listeners: RenderFun[] = []
+    let getState: GetState = () => state
+    let dispatch = (action: Action) => {
         changeState(getState(), action)
-        listeners.forEach(listener => {
+        listeners.forEach((listener) => {
             listener()
         })
     }
-    let subscribe = (listener: irenderFun) => listeners.push(listener)
+    let subscribe = (listener: RenderFun) => listeners.push(listener)
     return {
         getState,
         dispatch,
@@ -98,4 +101,4 @@ const state = {
         type: 'add',
         val: '2'
     })
-*/ 
+*/
