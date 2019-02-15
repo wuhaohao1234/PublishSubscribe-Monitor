@@ -1,37 +1,80 @@
-interface IClientList {
-    [key: string]: any[];
-}
-interface IEvents {
-    clientList: IClientList;
-    listen: <T>(key: string, fn: T) => boolean;
-    trigger: (key: string) => boolean;
-}
-class Events implements IEvents {
-    public clientList: IClientList = {}
-    public listen<T>(key: string, fn: T): boolean {
-        if (!this.clientList[key]) {
-            this.clientList[key] = []
+/*
+    <div id="add">
+        <input v-model="msg"/>
+        <span v-bind="msg" ></span>
+    </div>
+    new Vue({
+        el:'#app',
+        data:{
+            msg:0
         }
-        this.clientList[key].push(fn)
-        return true
+    })
+*/
+interface Ioptions {
+    [index: string]: any;
+}
+interface Idata {
+    [key: string]: any;
+}
+interface Imethods {
+    [index: string]: <T>(obj: T) => any;
+}
+class Vue {
+    public options: Ioptions;
+    public el: HTMLElement;
+    public data: Idata;
+    public methods: Imethods;
+    constructor(options: Ioptions) {
+        this.data = options.data || {}
+        this.el = document.querySelector(options.el) || document.body
+        this.methods = options.methods || {}
+        this.observe(this.data)
+        this.render(this.el)
     }
-    public trigger(key: string): boolean {
-        const fns: any[] = this.clientList[key]
-        if (!fns || fns.length === 0) {
-            return false
+    private observe<T>(data: T) {
+        console.log(`这里要判断${JSON.stringify(data)}是对象还是数组,还是空值`)
+        for (let key in data) {
+            if (Object.prototype.toString.call(data[key]) === '[object Object]') {
+                this.observe(data[key])
+            } else if (!data[key]) {
+                console.error('值不存在')
+            }
+            let value = data[key]
+            let _this = this
+            Object.defineProperty(data, key, {
+                get() {
+                    console.log('这里获取值')
+                    return value
+                },
+                set(newValue: any) {
+                    value = newValue
+                    for(let key in _this.methods) {
+                        _this.methods[key].call(_this, value)
+                    }
+                    return value
+                }
+            })
         }
-        for (let fn of fns) {
-            fn.call(undefined,key)
-        }
-        return true
+    }
+    private render(el: HTMLElement) {
+        /**
+         * 假设用户传递过来的有input:v-model与span:v-bind
+         */
+        let inp: HTMLInputElement = el.querySelector('input')
+        let keys: string = inp.getAttribute('v-model')
+        inp.addEventListener('input', () => {
+            this.data[keys] = inp.value
+        })
     }
 }
-
-let events = new Events()
-events.listen('add', (str: string) => {
-    console.log(str + '这是加法函数')
+new Vue({
+    el: '#app',
+    data: {
+        msg: '字符串'
+    },
+    methods: {
+        rendSpan(msg: string) {
+            this.el.querySelector('span').innerHTML = msg
+        }
+    }
 })
-events.listen('add', (str: string) => {
-    console.log(str + '这是减法函数')
-})
-events.trigger('add')
