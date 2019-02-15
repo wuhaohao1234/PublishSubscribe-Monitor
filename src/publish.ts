@@ -16,8 +16,9 @@ interface Ioptions {
 interface Idata {
     [key: string]: any;
 }
+type Icallback = <T>() => T | void;
 interface Imethods {
-    [index: string]: <T>(obj: T) => any;
+    [index: string]: Icallback
 }
 class Vue {
     public options: Ioptions;
@@ -31,7 +32,7 @@ class Vue {
         this.observe(this.data)
         this.render(this.el)
     }
-    private observe<T>(data: T) {
+    private observe<T>(data: T): void | T {
         console.log(`这里要判断${JSON.stringify(data)}是对象还是数组,还是空值`)
         for (let key in data) {
             if (Object.prototype.toString.call(data[key]) === '[object Object]') {
@@ -48,15 +49,15 @@ class Vue {
                 },
                 set(newValue: any) {
                     value = newValue
-                    for(let key in _this.methods) {
-                        _this.methods[key].call(_this, value)
+                    for (let methodkey in _this.methods) {
+                        _this.methods[methodkey].call(_this, value)
                     }
                     return value
                 }
             })
         }
     }
-    private render(el: HTMLElement) {
+    private render<T extends HTMLElement>(el: T): void | T {
         /**
          * 假设用户传递过来的有input:v-model与span:v-bind
          */
